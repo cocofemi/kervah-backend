@@ -83,13 +83,13 @@ Mutation :{
         { expiresIn: "7d" }
       );
 
-    ctx.reply.setCookie("kervah_api_session", sessionJwt, {
-        httpOnly: true,
-        secure: false,    
-        sameSite: "none",
-        path: "/",
-        maxAge: 604800,     // 7 days
-      });
+    // ctx.reply.setCookie("kervah_api_session", sessionJwt, {
+    //     httpOnly: true,
+    //     secure: false,    
+    //     sameSite: "none",
+    //     path: "/",
+    //     maxAge: 604800,     // 7 days
+    //   });
       const token =  generateJWT({
             id: user._id,
             role: user.role,
