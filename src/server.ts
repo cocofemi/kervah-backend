@@ -58,8 +58,10 @@ app.register(mercurius, {
     return { auth, user, response, request };
   },
 })
+const PORT = process.env.PORT || 9000;
 
-app.listen({ port: 9000 }, (err, address) => {
+app.listen({ port: Number(PORT), 
+  host: "0.0.0.0"  }, (err, address) => {
   if (err) throw err;
   console.log(`🚀 Server running at ${address}/graphiql`);
 });
