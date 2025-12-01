@@ -36,10 +36,19 @@ app.register(cors, {
 });
 
 app.addHook("preHandler", (req, reply, done) => {
-  reply.header("Access-Control-Allow-Origin", "https://kervah.co.uk");
-  reply.header("Access-Control-Allow-Credentials", "true");
+  const origin = req.headers.origin;
+
+  if (
+    origin === "https://kervah.co.uk" ||
+    origin === "https://lowis.vercel.app"
+  ) {
+    reply.header("Access-Control-Allow-Origin", origin);
+    reply.header("Access-Control-Allow-Credentials", "true");
+  }
+
   done();
 });
+
 
 app.addHook("preHandler", (req, reply, done) => {
   console.log("COOKIE SENT TO BACKEND:", req.headers.cookie);
@@ -50,33 +59,33 @@ app.addHook("preHandler", (req, reply, done) => {
 app.register(mercurius, {
   schema,
   graphiql: true,
-    context: async (request, response) => {
-    let auth = false;
-    let user = null;
-    const sessionCookie = request.cookies?.session; 
-    // const token = request.headers.authorization?.replace("Bearer ", "");
+  context: async (request, response) => {
+  let auth = false;
+  let user = null;
+  const sessionCookie = request.cookies?.session; 
+  // const token = request.headers.authorization?.replace("Bearer ", "");
 
-    console.log("Session cookie", sessionCookie)
+  console.log("Session cookie", sessionCookie)
 
-     if (!sessionCookie) {
-      return { auth, user };
+    if (!sessionCookie) {
+    return { auth, user };
+  }
+
+  try {
+    const decoded = jwtVerify.verify(
+      sessionCookie,
+      process.env.SESSION_SECRET || "kervah_supersecret_343434539dfmdf"
+      
+    );
+    if (decoded && typeof decoded === "object") {
+      auth = true;
+      user = decoded.user?.id ?? null;  // only return id
     }
-
-    try {
-      const decoded = jwtVerify.verify(
-        sessionCookie,
-        process.env.SESSION_SECRET || "kervah_supersecret_343434539dfmdf"
-        
-      );
-      if (decoded && typeof decoded === "object") {
-        auth = true;
-        user = decoded.user?.id ?? null;  // only return id
-      }
-    } catch (err) {
-      console.error("Invalid session cookie:", err);
-    }
-    return { auth, user, response, request };
-  },
+  } catch (err) {
+    console.error("Invalid session cookie:", err);
+  }
+  return { auth, user, response, request };
+},
 })
 const PORT = process.env.PORT || 9000;
 
