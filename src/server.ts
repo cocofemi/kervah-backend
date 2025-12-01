@@ -28,6 +28,8 @@ app.register(cors, {
   origin: [
     "http://localhost:3000",
     "https://kervah.co.uk",
+    "https://lowis.vercel.app"
+
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true,
