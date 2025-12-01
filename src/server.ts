@@ -23,9 +23,13 @@ app.register(cookie, {
   secret: process.env.SESSION_SECRET ?? "kervah_supersecret_343434539dfmdf",
 });
 
+
 app.register(cors, {
-  origin: ["http://localhost:3000"], // allow Next.js frontend
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  origin: [
+    "http://localhost:3000",
+    "https://kervah.co.uk",
+  ],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true,
 });
 
