@@ -1,0 +1,65 @@
+    // src/app.ts
+
+import Fastify from "fastify";
+import mercurius from "mercurius";
+import jwt from '@fastify/jwt';
+import * as jwtVerify from "jsonwebtoken";
+import { connectDB } from "./db";
+import { schema } from "./graphql"
+import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
+import { initSocket } from "./lib/socket";
+
+
+const app = Fastify({ logger: true });
+
+initSocket(app.server);
+
+app.register(jwt, { secret: process.env.JWT_SECRET || "supersecret" });
+
+connectDB();
+
+app.register(cookie, {
+  secret: process.env.SESSION_SECRET ?? "kervah_supersecret_343434539dfmdf",
+});
+
+app.register(cors, {
+  origin: ["http://localhost:3000"], // allow Next.js frontend
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  credentials: true,
+});
+
+app.register(mercurius, {
+  schema,
+  graphiql: true,
+    context: async (request, response) => {
+    let auth = false;
+    let user = null;
+    const sessionCookie = request.cookies?.session; 
+    // const token = request.headers.authorization?.replace("Bearer ", "");
+
+     if (!sessionCookie) {
+      return { auth, user };
+    }
+
+    try {
+      const decoded = jwtVerify.verify(
+        sessionCookie,
+        process.env.SESSION_SECRET || "kervah_supersecret_343434539dfmdf"
+        
+      );
+      if (decoded && typeof decoded === "object") {
+        auth = true;
+        user = decoded.user?.id ?? null;  // only return id
+      }
+    } catch (err) {
+      console.error("Invalid session cookie:", err);
+    }
+    return { auth, user, response, request };
+  },
+})
+
+app.listen({ port: 9000 }, (err, address) => {
+  if (err) throw err;
+  console.log(`🚀 Server running at ${address}/graphiql`);
+});
