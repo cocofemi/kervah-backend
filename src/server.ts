@@ -35,6 +35,22 @@ app.register(cors, {
   credentials: true,
 });
 
+app.addHook("onSend", (req, reply, payload, done) => {
+  const origin = req.headers.origin;
+
+  if (
+    origin === "https://kervah.co.uk" ||
+    origin === "https://lowis.vercel.app" ||
+    origin === "http://localhost:3000"
+  ) {
+    reply.header("Access-Control-Allow-Origin", origin);
+    reply.header("Access-Control-Allow-Credentials", "true");
+  }
+
+  done(null, payload);
+});
+
+
 app.addHook("preHandler", (req, reply, done) => {
   const origin = req.headers.origin;
 
