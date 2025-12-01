@@ -1,4 +1,4 @@
-import mongoose, { Types } from "mongoose"
+import { Types } from "mongoose"
 import { Business } from "../../models/business.model";
 import { User } from "../../models/user.model";
 import { IBusiness} from "../../interfaces/business.types";
