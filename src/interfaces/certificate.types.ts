@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import { Types } from "mongoose";
 
 export interface ICertificate {
   user: Types.ObjectId;

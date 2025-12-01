@@ -34,6 +34,7 @@
 
     // Recommended Options
     "strict": true,
+    "noImplicitAny": true,
     "jsx": "react-jsx",
     "verbatimModuleSyntax": false,
     "isolatedModules": true,
@@ -44,9 +45,7 @@
       "node_modules/@types"
     ]
   },
-    "include": [
-    "src/**/*.ts"
-  ],
+   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": [
     "node_modules"
   ]

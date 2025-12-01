@@ -5,8 +5,7 @@ import { CourseProgress } from "../../models/courseprogress.model";
 import { Scenario } from "../../models/scenario.model";
 import { ScenarioSubmission } from "../../models/scenarioSubmission.model";
 import { checkBusinessPermission } from "../../utils/checkBusinessPermision";
-import { User } from "../../models/user.model";
-import { Business } from "../../models/business.model";
+
 
 interface Context {
    auth: boolean;

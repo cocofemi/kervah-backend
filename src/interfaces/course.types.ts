@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { IUser } from "./user.types"
 
 export interface ICourse {
