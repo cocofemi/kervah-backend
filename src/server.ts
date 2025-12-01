@@ -41,6 +41,11 @@ app.addHook("preHandler", (req, reply, done) => {
   done();
 });
 
+app.addHook("preHandler", (req, reply, done) => {
+  console.log("COOKIE SENT TO BACKEND:", req.headers.cookie);
+  done();
+});
+
 
 app.register(mercurius, {
   schema,
