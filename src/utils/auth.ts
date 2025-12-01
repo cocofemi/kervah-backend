@@ -1,5 +1,4 @@
 import * as jwt from "jsonwebtoken";
-import { IUser } from "../interfaces/user.types";
 import otpMaster from "../models/otp.model"
 require('dotenv').config({path:'../.env'})
 
