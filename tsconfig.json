@@ -39,6 +39,7 @@
     "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
+    "moduleResolution": "node",
     "moduleDetection": "force",
     "skipLibCheck": true,
       "typeRoots": [
