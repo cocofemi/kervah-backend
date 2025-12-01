@@ -28,6 +28,7 @@ export const courseTypeDef = `
 
     type Query {
         courses: [Course!]!
+        allCreatedCourses: [Course!]!
         course(id: ID!):Course
     }
     type Mutation {

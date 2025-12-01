@@ -17,6 +17,14 @@ export const courseResolver = {
                 .populate({ path: "lessons", select: "id title textContent videoUrl" })
                 .sort({ createdAt: -1 })
         },
+
+        allCreatedCourses: async (_: any, __: any, ctx: Context): Promise<ICourse[]> => {
+            if (!ctx.auth) throw new Error("Unauthorized");
+                return await Course.find({$and: [{ archive: { $ne: true } }]})
+                .populate({ path: "createdBy", select: "id fname lname email" })
+                .populate({ path: "lessons", select: "id title textContent videoUrl" })
+                .sort({ createdAt: -1 })
+        },
         course: async (_: any, {id}:{id: string}, ctx: Context): Promise<ICourse | null> => {
             if (!ctx.auth) throw new Error("Unauthorized");
             const populatedCourse =  await Course.findById(id)

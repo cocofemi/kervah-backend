@@ -30,6 +30,7 @@ export const certificateResolver = {
 
         return await Certificate.find(filter)
             .populate("user course business")
+            .sort({ createdAt: -1 })
         },
         
         certificatesByBusiness: async (_: any, { businessId }: any, ctx: Context) => {
