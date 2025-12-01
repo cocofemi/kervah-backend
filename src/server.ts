@@ -41,7 +41,8 @@ app.addHook("onSend", (req, reply, payload, done) => {
   if (
     origin === "https://kervah.co.uk" ||
     origin === "https://lowis.vercel.app" ||
-    origin === "http://localhost:3000"
+    origin === "http://localhost:3000" ||
+    origin === "https://www.kervah.co.uk"
   ) {
     reply.header("Access-Control-Allow-Origin", origin);
     reply.header("Access-Control-Allow-Credentials", "true");
