@@ -40,12 +40,14 @@ app.addHook("preHandler", (req, reply, done) => {
 
   if (
     origin === "https://kervah.co.uk" ||
-    origin === "https://lowis.vercel.app"
+    origin === "https://lowis.vercel.app" ||
+    origin === "http://localhost:3000"
   ) {
     reply.header("Access-Control-Allow-Origin", origin);
     reply.header("Access-Control-Allow-Credentials", "true");
   }
 
+  console.log("COOKIE SENT TO BACKEND:", req.headers.cookie);
   done();
 });
 
