@@ -85,7 +85,7 @@ Mutation :{
         { expiresIn: "7d" }
       );
 
-    ctx.reply.setCookie("session", sessionJwt, {
+    ctx.reply.setCookie("backend_session", sessionJwt, {
         httpOnly: true,
         secure: false,    
         sameSite: "lax",
