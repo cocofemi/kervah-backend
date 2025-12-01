@@ -70,8 +70,6 @@ Mutation :{
         path: "businesses.business",
         select: "id name",
         })
-        console.log("User", user)
-        console.log("Compare", await user?.comparePassword(password))
         if (!user || !(await user.comparePassword(password))) {
         throw new Error("Invalid credentials");
       }

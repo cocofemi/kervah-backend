@@ -35,6 +35,13 @@ app.register(cors, {
   credentials: true,
 });
 
+app.addHook("preHandler", (req, reply, done) => {
+  reply.header("Access-Control-Allow-Origin", "https://kervah.co.uk");
+  reply.header("Access-Control-Allow-Credentials", "true");
+  done();
+});
+
+
 app.register(mercurius, {
   schema,
   graphiql: true,
