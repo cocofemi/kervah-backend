@@ -4,26 +4,23 @@
     "outDir": "./dist",
 
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es2017",
 
     "types": ["node"],
+    "skipLibCheck": true,
 
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
 
-    "noUncheckedIndexedAccess": true,
     "strictNullChecks": true,
     "exactOptionalPropertyTypes": true,
 
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-
-    "typeRoots": ["node_modules/@types"]
+    "moduleDetection": "force"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules"]
