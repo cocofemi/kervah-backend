@@ -42,6 +42,8 @@ app.register(mercurius, {
     const sessionCookie = request.cookies?.session; 
     // const token = request.headers.authorization?.replace("Bearer ", "");
 
+    console.log("Session cookie", sessionCookie)
+
      if (!sessionCookie) {
       return { auth, user };
     }
