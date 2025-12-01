@@ -5,6 +5,7 @@ import { CourseProgress } from "../../models/courseprogress.model";
 import { Scenario } from "../../models/scenario.model";
 import { ScenarioSubmission } from "../../models/scenarioSubmission.model";
 import { checkBusinessPermission } from "../../utils/checkBusinessPermision";
+import { ICourseProgress } from "../../interfaces/courseprogress.types";
 
 
 interface Context {
@@ -30,22 +31,22 @@ export const analyticsResolver = {
                 business: businessId,
             });
 
-            const started = progresses.filter(p => p.status === "started").length;
+            const started = progresses.filter((p:ICourseProgress) => p.status === "started").length
 
             const quarter = progresses.filter(
-                p => (p.completedLessons.length / lessonCount) >= 0.25
+                (p:ICourseProgress) => (p.completedLessons.length / lessonCount) >= 0.25
             ).length;
 
             const half = progresses.filter(
-                p => (p.completedLessons.length / lessonCount) >= 0.5
+                (p:ICourseProgress) => (p.completedLessons.length / lessonCount) >= 0.5
             ).length;
 
             const threeQuarter = progresses.filter(
-                p => (p.completedLessons.length / lessonCount) >= 0.75
+                (p:ICourseProgress) => (p.completedLessons.length / lessonCount) >= 0.75
             ).length;
 
             const completedLessons = progresses.filter(
-                p => p.completedLessons.length === lessonCount
+                (p:ICourseProgress) => p.completedLessons.length === lessonCount
             ).length;
 
             const scenarioSubmitted = await ScenarioSubmission.countDocuments({
@@ -53,7 +54,7 @@ export const analyticsResolver = {
                 businessId: businessId,
             });
 
-            const passed = progresses.filter(p => p.status === "passed").length;
+            const passed = progresses.filter((p:ICourseProgress) => p.status === "passed").length;
 
             const certificatesIssued = await Certificate.countDocuments({
                 course: courseId,
