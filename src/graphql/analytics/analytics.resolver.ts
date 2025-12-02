@@ -6,6 +6,8 @@ import { Scenario } from "../../models/scenario.model";
 import { ScenarioSubmission } from "../../models/scenarioSubmission.model";
 import { checkBusinessPermission } from "../../utils/checkBusinessPermision";
 import { ICourseProgress } from "../../interfaces/courseprogress.types";
+import { Business } from "../../models/business.model";
+import { User } from "../../models/user.model";
 
 
 interface Context {
@@ -194,7 +196,100 @@ export const analyticsResolver = {
                 return timeB - timeA;
             });
             return activities.slice(0, limit);
-        }
+        },
+            businessUsersPerformance: async (_: any, { businessId }: any, ctx: Context) => {
+                if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
+
+                await checkBusinessPermission(businessId, ctx?.user, ["admin"]);
+
+                const business = await Business.findById(businessId)
+                    .populate("members.user");
+
+                if (!business) throw new Error("Business not found");
+
+                const users = business.members.map((m: any) => m.user);
+
+                const performances:any = [];
+
+                for (const user of users) {
+                    const performance = await getUserPerformance(user._id, businessId);
+                    performances.push(performance);
+                }
+
+                return performances;
+                },
+
+            userPerformance: async (_: any, { businessId, userId }: any, ctx: Context) => {
+                if (!ctx.auth) throw new Error("Unauthorized");
+                return getUserPerformance(userId, businessId);
+            },
 
     }
+}
+
+async function getUserPerformance(userId: string, businessId: string) {
+  // All courses the business has
+  const business = await Business.findById(businessId)
+    .select("assignedCourses");
+
+    if (!business) {
+    return {
+      userId,
+      userName: "",
+      courses: [],
+    };
+  }
+
+   const assignedCourseIds = business.assignedCourses ?? [];
+
+    if (!assignedCourseIds.length) {
+        const user = await User.findById(userId);
+        return {
+        userId,
+        userName: `${user?.fname ?? ""} ${user?.lname ?? ""}`.trim(),
+        courses: [],
+        };
+    }
+
+    const courseDocs = await Course.find({
+        _id: { $in: assignedCourseIds },
+    }).select("_id title lessons");
+
+    // 3) Load progress for this user in this business
+    const progressData = await CourseProgress.find({
+        user: userId,
+        business: businessId,
+    });
+
+    
+      // 4) Build course performance list
+    const courses = courseDocs.map((course) => {
+        const progress = progressData.find(
+        (p) => p.course.toString() === course._id.toString()
+        );
+
+        const totalLessons = course.lessons?.length || 0;
+        const completedLessons = progress?.completedLessons?.length || 0;
+
+        const completionRate =
+        totalLessons > 0
+            ? Math.round((completedLessons / totalLessons) * 100)
+            : 0;
+
+        return {
+        courseId: course._id,
+        courseName: course.title,
+        completionRate,
+        score: progress?.score?.toFixed(0) ?? null,
+        };
+    });
+
+    const user = await User.findById(userId);
+
+    return {
+        userId,
+        userName: `${user?.fname ?? ""} ${user?.lname ?? ""}`.trim(),
+        courses,
+    };
+
 }

@@ -32,6 +32,20 @@ type RecentActivity {
   timestamp: String!
 }
 
+type UserCoursePerformance {
+  courseId: ID!
+  courseName: String!
+  completionRate: Int!
+  score: Float
+}
+
+type UserPerformance {
+  userId: ID!
+  userName: String!
+  courses: [UserCoursePerformance!]!
+}
+
+
 extend type Query {
   recentActivities(
     businessId: ID!
@@ -43,5 +57,7 @@ extend type Query {
 type Query {
     courseFunnel(courseId: ID!, businessId: ID!): FunnelMetrics!
     engagementOverTime(businessId: ID!, days: Int!): [EngagementOverTime!]!
+    userPerformance(businessId: ID!, userId: ID!): UserPerformance!
+    businessUsersPerformance(businessId: ID!): [UserPerformance!]!
 }
 `
