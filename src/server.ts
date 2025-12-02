@@ -64,13 +64,13 @@ app.addHook("preHandler", (req, reply, done) => {
     reply.header("Access-Control-Allow-Credentials", "true");
   }
 
-  console.log("COOKIE SENT TO BACKEND:", req.headers.cookie);
+  // console.log("COOKIE SENT TO BACKEND:", req.headers.cookie);
   done();
 });
 
 
 app.addHook("preHandler", (req, reply, done) => {
-  console.log("COOKIE SENT TO BACKEND:", req.headers.cookie);
+  // console.log("COOKIE SENT TO BACKEND:", req.headers.cookie);
   done();
 });
 
@@ -84,7 +84,7 @@ app.register(mercurius, {
   const sessionCookie = request.cookies?.session; 
   // const token = request.headers.authorization?.replace("Bearer ", "");
 
-  console.log("Session cookie", sessionCookie)
+  // console.log("Session cookie", sessionCookie)
 
     if (!sessionCookie) {
     return { auth, user };

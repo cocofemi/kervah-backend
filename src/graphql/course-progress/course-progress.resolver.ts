@@ -96,8 +96,8 @@ export const courseProgressResolver = {
       
         //find user course progress for lesson
         let allProgress = await CourseProgress.find({
-          userId: ctx?.user,
-          courseId: courseId
+          user: ctx?.user,
+          course: courseId
         })
 
         //check if there are any lessons currently started
@@ -148,7 +148,7 @@ export const courseProgressResolver = {
       
     updateCourseProgress: async (_: any, { input }:any,ctx:Context):Promise<ICourseProgress | null > => {
       const { courseId, score, lastLessonId, lessonId, percentage  } = input;
-       if (!ctx.auth) throw new Error("Unauthorized");
+       if (!ctx.auth) throw new Error("Unauthorized")
 
       const progress = await CourseProgress.findOne({
         course:courseId, 
