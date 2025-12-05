@@ -24,7 +24,7 @@ export const groupResolver = {
         groupsByBusiness: async (_: any, { businessId }: any, ctx: Context) => {
         if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
             const currentUserId = ctx.user;
-        await checkBusinessPermission(businessId, currentUserId, ["admin", "member"]);
+        await checkBusinessPermission(businessId, currentUserId, ["admin", "member", "super-admin"]);
         return await Group.find({ business: businessId })
             .populate("members", "id fname lname email")
             .populate("courses", "id title category thumbnail")
@@ -40,7 +40,7 @@ export const groupResolver = {
             .populate("courses", "id title category thumbnail")
 
         if (!group) throw new Error("Group not found");
-        await checkBusinessPermission(group.business._id.toString(), currentUserId, ["admin", "member"]);
+        await checkBusinessPermission(group.business._id.toString(), currentUserId, ["admin", "member", "super-admin"]);
         return group;
         },
     },
@@ -52,7 +52,7 @@ export const groupResolver = {
 
         if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
         const currentUserId = ctx.user;
-        const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "member"])
+        const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"])
 
         const newGroup = await Group.create({
             business: business._id,
@@ -76,7 +76,7 @@ export const groupResolver = {
 
     if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
     const currentUserId = ctx.user;
-    await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "member"])
+    await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "super-admin"])
 
       if (name) group.name = name;
       if (description) group.description = description;
@@ -96,7 +96,7 @@ export const groupResolver = {
 
     if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
     const currentUserId = ctx.user;
-    await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "member"])
+    await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "super-admin"])
 
     await group.deleteOne();
     return true;
@@ -111,7 +111,7 @@ export const groupResolver = {
       
         if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
         const currentUserId = ctx.user;
-        await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "member"])
+        await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "super-admin"])
 
         // Fetch all valid users
         const validMembers = await User.find({ _id: { $in: memberIds } });
@@ -144,7 +144,7 @@ export const groupResolver = {
       
       if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
       const currentUserId = ctx.user;
-      await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "member"])
+      await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "super-admin"])
 
         // Convert memberIds to strings for comparison
       const idsToRemove = memberIds.map((id) => id.toString());
@@ -178,7 +178,7 @@ export const groupResolver = {
         if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
         const currentUserId = ctx.user; 
 
-        await checkBusinessPermission(group.business.toString(), currentUserId, ["admin"]);
+        await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "super-admin"]);
         // Fetch all valid courses
         const validCourses = await Course.find({ _id: { $in: courseIds } });
         if (!validCourses.length) throw new Error("No valid courses found");
@@ -212,7 +212,7 @@ export const groupResolver = {
       
       if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
       const currentUserId = ctx.user; 
-      await checkBusinessPermission(group.business.toString(), currentUserId, ["admin"]);
+      await checkBusinessPermission(group.business.toString(), currentUserId, ["admin","super-admin"]);
 
       const idsToRemove = courseIds.map((id) => id.toString())
 

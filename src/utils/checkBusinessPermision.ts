@@ -8,7 +8,7 @@ import { Business } from "../models/business.model";
 export const checkBusinessPermission = async (
   businessId: string,
   userId: string,
-  allowedRoles: string[] = ["admin"]
+  allowedRoles: string[] = ["super-admin","admin"]
 ) => {
   const business = await Business.findById(businessId);
   if (!business) throw new Error("Business not found");
@@ -18,6 +18,9 @@ const member = business.members?.find(
     String(typeof m.user === "object" && "_id" in m.user ? m.user._id : m.user) ===
     String(userId)
 );
+
+console.log("Allowed roles:", allowedRoles);
+console.log("Member role:", member?.role);
 
   if (!member) throw new Error("User is not a member of this business");
 

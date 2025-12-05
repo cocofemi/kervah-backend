@@ -53,7 +53,7 @@ export const courseProgressResolver = {
           
           const sampleProgress = await CourseProgress.findOne({ group: groupId });
           if (!sampleProgress) throw new Error("No progress found");
-          await checkBusinessPermission(sampleProgress.business.toString(), ctx.user, ["admin", "member"]);
+          await checkBusinessPermission(sampleProgress.business.toString(), ctx.user, ["admin", "member", "super-admin"]);
 
           return await CourseProgress.find({ group: groupId })
               .populate("user", "id name email")

@@ -16,7 +16,7 @@ export const businessInviteResolver = {
     Query: {
         businessInvites: async(_:any, {businessId}: {businessId:string}, ctx:Context):Promise<IBusinessInvite[] | null> => {
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
-            await checkBusinessPermission(businessId, ctx.user, ["admin"]);
+            await checkBusinessPermission(businessId, ctx.user, ["admin", "super-admin"]);
 
             const invites = await BusinessInvite.find({ business: businessId })
                 .populate("business", "id name")
@@ -52,7 +52,7 @@ export const businessInviteResolver = {
                 status: "pending" 
             });
 
-            await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+            await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
             const token = nanoid(24);
             const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
@@ -161,7 +161,7 @@ export const businessInviteResolver = {
 
             const invite = await BusinessInvite.findOne({ token });
             if (!invite) throw new Error("Invalid or expired invitation");
-             await checkBusinessPermission(invite.business.toString(), currentUserId, ["admin"]);
+             await checkBusinessPermission(invite.business.toString(), currentUserId, ["admin", "super-admin"]);
 
              if (invite.status !== "pending") {
                 throw new Error("Only pending invites can be revoked");

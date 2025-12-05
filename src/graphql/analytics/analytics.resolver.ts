@@ -20,7 +20,7 @@ export const analyticsResolver = {
         courseFunnel: async (_: any, { courseId, businessId }: any, ctx: Context) => {
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
 
-             await checkBusinessPermission(businessId, ctx?.user, ["admin"]);
+             await checkBusinessPermission(businessId, ctx?.user, ["admin","super-admin" ]);
 
             const totalLessons = await Course.findById(courseId).select("lessons");
             const lessonCount = totalLessons?.lessons?.length ?? 1;
@@ -78,7 +78,7 @@ export const analyticsResolver = {
         engagementOverTime: async (_: any, { businessId, days }: any, ctx: Context) => {
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
 
-            await checkBusinessPermission(businessId, ctx?.user, ["admin"]);
+            await checkBusinessPermission(businessId, ctx?.user, ["admin", "super-admin"]);
 
             const sinceDate = new Date();
             sinceDate.setDate(sinceDate.getDate() - (days || 30)); // default 30 days
@@ -145,7 +145,7 @@ export const analyticsResolver = {
         recentActivities: async (_:any, { businessId, limit = 5 }: {businessId: string, limit:number}, ctx:Context) => {
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
 
-            await checkBusinessPermission(businessId, ctx?.user, ["admin"]);
+            await checkBusinessPermission(businessId, ctx?.user, ["admin","super-admin"]);
 
             const activities:any = [];
 
@@ -200,7 +200,7 @@ export const analyticsResolver = {
             businessUsersPerformance: async (_: any, { businessId }: any, ctx: Context) => {
                 if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
 
-                await checkBusinessPermission(businessId, ctx?.user, ["admin"]);
+                await checkBusinessPermission(businessId, ctx?.user, ["admin", "super-admin"]);
 
                 const business = await Business.findById(businessId)
                     .populate("members.user");

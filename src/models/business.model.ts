@@ -3,7 +3,7 @@ import { IBusiness, IMember } from "../interfaces/business.types"
 
 const MemberSchema = new Schema<IMember>({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
-  role: { type: String, enum: ["super-admin","admin", "member"], default: "member" },
+  role: { type: String, enum: ["super-admin", "admin", "member"], default: "member" },
   joined: {type: Date, default: Date.now}
 }, { _id: false });
 

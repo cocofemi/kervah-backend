@@ -22,7 +22,7 @@ export const certificateResolver = {
         
         // User can see their own certificates or admins can view all
         if (currentUserId !== ctx?.user) {
-            await checkBusinessPermission(businessId, currentUserId, ["admin", "member"]);
+            await checkBusinessPermission(businessId, currentUserId, ["admin", "member", "super-admin"]);
         }
 
         const filter: any = { user: ctx?.user };
@@ -36,7 +36,7 @@ export const certificateResolver = {
         certificatesByBusiness: async (_: any, { businessId }: any, ctx: Context) => {
         if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
         const currentUserId = ctx.user;
-        await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+        await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
         return await Certificate.find({ business: businessId })
             .populate("user", "fname lname email")
@@ -65,7 +65,7 @@ export const certificateResolver = {
             const currentUserId = ctx.user
             // Only allow user themselves or business admins
             if (currentUserId !== ctx?.user) {
-                await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+                await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
             }
 
             // Get all course progress records for this user + business

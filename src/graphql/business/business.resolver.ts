@@ -50,7 +50,7 @@ export const businessResolver = {
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
             const currentUserId = ctx.user;
 
-            const business = await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+            const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
             const populated = await Business.findById(business._id)
             .populate({
                 path: "assignedCourses",
@@ -66,7 +66,7 @@ export const businessResolver = {
 
         businessOverview: async (_: any, { businessId }: any, ctx: Context) => {
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
-                await checkBusinessPermission(businessId, ctx?.user, ["admin"]);
+                await checkBusinessPermission(businessId, ctx?.user, ["admin", "super-admin"]);
 
             const [totalMembers, totalCourses, totalGroups, totalCertificates] =
                 await Promise.all([
@@ -95,7 +95,7 @@ export const businessResolver = {
             if(!ctx.auth || !ctx.user) throw new Error("Unauthorized")
             const currentUserId = ctx.user
             //Verify the user has permission
-            await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+            await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
             //Get ALL members of business
             const business = await Business.findById(businessId)
@@ -274,7 +274,7 @@ export const businessResolver = {
                 subscriptionPlan:string, subscriptionStatus:boolean},ctx: Context): Promise<IBusiness | null> => {
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
             const currentUserId = ctx.user;
-            await checkBusinessPermission(id, currentUserId, ["admin"]);
+            await checkBusinessPermission(id, currentUserId, ["admin", "super-admin"]);
             return await Business.findByIdAndUpdate(id, {name, phone, address, serviceType, logo, subscriptionPlan, subscriptionStatus}, { new: true, runValidators: true })
         },
         
@@ -286,7 +286,7 @@ export const businessResolver = {
             const currentUserId = ctx.user;
 
             // only admins can add members
-            const business = await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+            const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
             const user = await User.findById(userId);
             if (!user) throw new Error("User not found");
@@ -327,7 +327,7 @@ export const businessResolver = {
                 const currentUserId = ctx.user; 
 
             // only admins can add members
-            const business = await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+            const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
             const memberIndex = business.members.findIndex(
                 (m) => m.user.toString() === userId.toString()
@@ -367,7 +367,7 @@ export const businessResolver = {
                     const currentUserId = ctx.user; 
 
             // only admins can add members
-            const business = await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+            const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
             const user = await User.findById(userId);
             if (!user) throw new Error("User not found");
@@ -406,7 +406,7 @@ export const businessResolver = {
         const currentUserId = ctx.user; 
 
         // Only admin can assign courses
-        const business = await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+        const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
         // Fetch all valid courses
         const validCourses = await Course.find({ _id: { $in: courseIds } });
@@ -442,7 +442,7 @@ export const businessResolver = {
         const currentUserId = ctx.user; 
 
         // ✅ Only admin can assign courses
-        const business = await checkBusinessPermission(businessId, currentUserId, ["admin"]);
+        const business = await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
         business.assignedCourses = business.assignedCourses.filter(
             (id) => id.toString() !== courseId.toString()

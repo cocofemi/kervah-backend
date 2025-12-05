@@ -18,7 +18,7 @@ export const notificationResolver = {
 
         notificationsForBusiness: async (_: any, { businessId }: any, ctx: Context) => {
             if(!ctx.auth || !ctx.user) throw new Error("Unauthorized");
-            await checkBusinessPermission(businessId, ctx.user, ["admin"]);
+            await checkBusinessPermission(businessId, ctx.user, ["admin", "super-admin"]);
             return await Notification.find({ business: businessId })
                 .sort({ createdAt: -1 })
         },
@@ -30,7 +30,7 @@ export const notificationResolver = {
 
             // Admins can post business-wide notifications
             if (businessId) {
-                await checkBusinessPermission(businessId, ctx.user, ["admin"]);
+                await checkBusinessPermission(businessId, ctx.user, ["admin", "super-admin"]);
             }
 
             const notif = await Notification.create({
