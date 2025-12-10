@@ -24,6 +24,7 @@ export const userResolver = {
         return users
     },
     user: async(_:any, __:any, ctx: Context): Promise<IUser | null> => {
+        console.log("User", ctx)
         if (!ctx.auth) throw new Error("Unauthorized");
         return await User.findById(ctx.user).populate({
         path: "businesses.business",

@@ -75,6 +75,7 @@ type Query {
   businessCourses(businessId: ID!): [Course!]!
   businessOverview(businessId: ID!): BusinessOverview!
   businessLearningSummary(businessId: ID!): [BusinessLearningSummary!]!
+  groupLearningSummary(groupId: ID!): [BusinessLearningSummary!]!
 }
 
 

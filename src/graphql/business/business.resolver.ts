@@ -159,78 +159,154 @@ export const businessResolver = {
             const results: any[] = [];
 
             for (const member of members) {
-            const user = member.user;
-            if (!user) continue;
+                const user = member.user;
+                if (!user) continue;
 
-            const userId =
-                typeof user === "string"
-                ? user
-                : (user as any)._id
-                ? (user as any)._id.toString()
-                : user.toString();
+                const userId =
+                    typeof user === "string"
+                    ? user
+                    : (user as any)._id
+                    ? (user as any)._id.toString()
+                    : user.toString();
 
-            const assignedCoursesRaw = userAssignedCourses.get(userId) || [];
+                const assignedCoursesRaw = userAssignedCourses.get(userId) || [];
 
-            // only keep valid populated courses
-            const assignedCourses = assignedCoursesRaw.filter(
-                (c: any) => c && (c as any)._id
-            );
+                // only keep valid populated courses
+                const assignedCourses = assignedCoursesRaw.filter(
+                    (c: any) => c && (c as any)._id
+                );
 
-            const courseProgressList: any[] = [];
+                const courseProgressList: any[] = [];
 
-            for (const courseDoc of assignedCourses) {
-                const courseId = (courseDoc as any)._id?.toString();
-                if (!courseId) continue; // absolutely no invalid courses
+                for (const courseDoc of assignedCourses) {
+                    const courseId = (courseDoc as any)._id?.toString();
+                    if (!courseId) continue; // absolutely no invalid courses
 
-                const key = `${userId}-${courseDoc._id}`;
-                const progress = progressMap.get(key) || null;
+                    const key = `${userId}-${courseDoc._id}`;
+                    const progress = progressMap.get(key) || null;
 
-                let progressId
-                let status = "not_started";
-                let score: number | null = null;
-                let completedAt: Date | null = null;
+                    let progressId
+                    let status = "not_started";
+                    let score: number | null = null;
+                    let completedAt: Date | null = null;
 
-                if (progress) {
-                    progressId = progress.id
-                    status = progress.status;
-                    score = progress.score;
-                    completedAt = progress.completedAt;
+                    if (progress) {
+                        progressId = progress.id
+                        status = progress.status;
+                        score = progress.score;
+                        completedAt = progress.completedAt;
+                    }
+
+                    // EXPLICITLY BUILD A PLAIN COURSE OBJECT WITH `id`
+                    const safeCourse = {
+                    id: courseId,
+                    title: (courseDoc as any).title ?? "",
+                    category: (courseDoc as any).category ?? null,
+                    duration: (courseDoc as any).duration ?? null,
+                    };
+
+                    courseProgressList.push({
+                    course: safeCourse,
+                    progressId,
+                    status,
+                    score,
+                    completedAt,
+                    });
                 }
 
-                // EXPLICITLY BUILD A PLAIN COURSE OBJECT WITH `id`
-                const safeCourse = {
-                id: courseId,
-                title: (courseDoc as any).title ?? "",
-                category: (courseDoc as any).category ?? null,
-                duration: (courseDoc as any).duration ?? null,
-                };
-
-                courseProgressList.push({
-                course: safeCourse,
-                progressId,
-                status,
-                score,
-                completedAt,
+                results.push({
+                    user,
+                    courses: courseProgressList,
                 });
             }
 
-            results.push({
-                user,
-                courses: courseProgressList,
-            });
+            return results;
+        },
+        groupLearningSummary: async (_: any, { groupId }: any, ctx: Context) => {
+            if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
+
+            // 1. Fetch group 
+            const group = await Group.findById(groupId)
+                .select("members courses")
+                .populate({
+                path: "members",
+                model: "User",
+                select: "fname lname email avatar",
+                options: { lean: true }
+                })
+                .populate({
+                path: "courses",
+                model: "Course",
+                select: "title category duration",
+                options: { lean: true }
+                })
+                .lean();
+
+            if (!group) throw new Error("Group not found");
+
+            const members = group.members ?? [];
+            const courses = group.courses ?? [];
+
+            const memberIds = members.map((m: any) => m._id);
+            const courseIds = courses.map((c: any) => c._id);
+
+            // 2. Single query for all progress records
+            // Use lean() for performance
+            const progresses = await CourseProgress.find({
+                user: { $in: memberIds },
+                course: { $in: courseIds }
+            })
+                .select("user course status score completedAt")
+                .lean();
+
+            // 3. Create a very fast lookup map: `${user}-${course}` → progress
+            const progressMap = new Map<string, any>();
+            for (const p of progresses) {
+                progressMap.set(`${p.user}-${p.course}`, p);
             }
 
-            return results;
-        }
+            // 4. Pre-compute safeCourses array once
+            const safeCourses = courses.map((c: any) => ({
+                id: c._id.toString(),
+                title: c.title,
+                category: c.category,
+                duration: c.duration
+            }));
+
+            // 5. Build each user row — minimal object cloning
+            const result = members.map((user: any) => {
+                const uid = user._id.toString();
+
+                const courseList = safeCourses.map((course) => {
+                const key = `${uid}-${course.id}`;
+                const p = progressMap.get(key);
+
+                return {
+                    course,
+                    progressId: p?._id ?? null,
+                    status: p?.status ?? "not_started",
+                    score: p?.score ?? null,
+                    completedAt: p?.completedAt ?? null
+                };
+                });
+
+                return { user, courses: courseList };
+            });
+
+            return result;
+            }
+
     },
 
     Mutation: {
          registerBusiness: async (_:any, {name, phone, address, logo, serviceType}: {name: string, phone:string, 
             address:string, serviceType:string,  logo:string}, ctx:Context) => {
             if (!ctx.auth) throw new Error("Unauthorized");
-            const owner = await User.findById(ctx.user);
+            const user = await User.findById(ctx.user);
 
-            if (!owner) throw new Error("Owner not found");
+            console.log("User", user)
+
+            if (!user) throw new Error("User not found");
 
             const existing = await Business.findOne({
                 ownerId: ctx?.user,
@@ -247,18 +323,18 @@ export const businessResolver = {
                 address,
                 serviceType,
                 logo,
-                ownerId: owner._id,
+                ownerId: user._id,
                 members: [
                 {
-                    user: owner._id,
+                    user: user._id,
                     role: "admin", // owner automatically admin
                 },
                 ],
             });
 
-            if (!owner.businesses) owner.businesses = [];
-            owner.businesses.push({ business: business._id, role: "admin" });
-            await owner.save();
+            if (!user.businesses) user.businesses = [];
+            user.businesses.push({ business: business._id, role: "admin" });
+            await user.save();
 
             const populated = await Business.findById(business._id)
             .populate({ path: "ownerId", select: "id fname lname email" })
