@@ -168,41 +168,52 @@ export const groupResolver = {
       return populated
     },
 
-    addCourseToGroup: async (_: any, { input }: {input: {groupId:string, 
-      courseIds:string}}, ctx: Context):Promise<IGroup | null> => {
-        const { groupId, courseIds } = input;
-
-        const group = await Group.findById(groupId);
-        if (!group) throw new Error("Group not found");
+    addCourseToGroup: async (_: any, { input }: {input: {groupIds: string[]; courseIds: string[]}}, ctx: Context):Promise<IGroup[] | null> => {
+        const { groupIds, courseIds } = input;
 
         if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
         const currentUserId = ctx.user; 
 
-        await checkBusinessPermission(group.business.toString(), currentUserId, ["admin", "super-admin"]);
-        // Fetch all valid courses
-        const validCourses = await Course.find({ _id: { $in: courseIds } });
-        if (!validCourses.length) throw new Error("No valid courses found");
+        if (!groupIds.length) throw new Error("groupIds cannot be empty");
+        if (!courseIds.length) throw new Error("courseIds cannot be empty");
 
-        // Convert existing IDs to strings for comparison
-        const existingIds = group.courses.map((c) => c.toString());
+          // Fetch groups
+        const groups = await Group.find({ _id: { $in: groupIds } });
+        if (!groups.length) throw new Error("No valid groups found");
 
-        // Filter only new, unique courses
-        const newCourses = validCourses.filter(
-            (course) => !existingIds.includes(course._id.toString())
-        );
+        //check permission that groups belong to same business
+        const businessId = groups[0].business.toString();
+        await checkBusinessPermission(businessId, currentUserId, ["admin", "super-admin"]);
 
-        if (!newCourses.length) throw new Error("All courses already exist in this group");
+        // Fetch and validate courses
+        const courses = await Course.find({ _id: { $in: courseIds } }).select("_id");
+        if (courses.length !== courseIds.length) {
+          throw new Error("One or more courseIds are invalid");
+        }       
+        
+        const courseIds_ = courses.map((c) => c._id);
 
-        // Push only new courses
-        group.courses.push(...newCourses.map((c) => c._id));
-        await group.save();
+          // Update each group
+        for (const group of groups) {
+          const existing = new Set(group.courses.map((c) => c.toString()));
 
-        const populated = await Group.findById(group._id)
+          const toAdd = courseIds_.filter((id) => !existing.has(id.toString()));
+
+          if (toAdd.length) {
+            group.courses.push(...toAdd);
+            await group.save();
+          }
+        }
+
+
+        const populated = await Group.find({ _id: { $in: groupIds } })
         .populate("business", "id name")
         .populate("members", "id fname lname email")
         .populate("courses", "id title description duration category thumbnail")
 
+        console.log("Populated",populated)
         return populated
+        
     },
     
     removeCourseFromGroup: async (_: any, { input }: {input: {groupId:string, courseIds:string[]}}, ctx: Context) => {

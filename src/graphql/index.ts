@@ -32,19 +32,21 @@ import { converationTypeDefs } from "./conversation/conversation.schema";
 import { conversationResolver } from "./conversation/conversation.resolver";
 import { courseGroupTypeDef } from "./course-group/course-group.schema";
 import { courseGroupResolver } from "./course-group/course-group.resolver";
+import { policyTypeDefs } from "./policy/policy.schema";
+import { policyDocumentResolvers } from "./policy/policy.resolver";
 
 const typeDefs = mergeTypeDefs([userTypeDefs, authTypeDefs, 
   businessTypeDefs, courseTypeDef, lessonTypeDef,
 assessmentTypeDef, scenarioTypeDefs, resultTypeDefs,
 groupTypeDefs, courseProgressTypeDefs, certificateTypeDefs,
 notificationTypeDefs, businessInviteTypeDefs, analyticsTypeDef,
-converationTypeDefs, courseGroupTypeDef]);
+converationTypeDefs, courseGroupTypeDef, policyTypeDefs]);
 const resolvers = mergeResolvers([userResolver, authResolver, 
   businessResolver, courseResolver, lessonResolver,
 assessmentResolver, scenarioResolver, resultResolver,
 groupResolver, courseProgressResolver, certificateResolver,
 notificationResolver, businessInviteResolver, analyticsResolver,
-conversationResolver, courseGroupResolver]);
+conversationResolver, courseGroupResolver, policyDocumentResolvers]);
 
 export const schema = makeExecutableSchema({
   typeDefs,

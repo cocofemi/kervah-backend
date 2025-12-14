@@ -14,7 +14,13 @@ export const courseGroupResolver = {
         },
         courseGroups: async (_:any, __:any, ctx:Context) => {
             if (!ctx.auth) throw new Error("Unauthorized");
-            return CourseGroup.find().populate("courses");
+            return CourseGroup.find().populate({
+                path: "courses",
+                populate: {
+                    path: "lessons",
+                },
+            });
+
         },
     },
 

@@ -23,7 +23,7 @@ extend type Mutation {
   deleteGroup(groupId: ID!): Boolean!
   addMemberToGroup(input: AddGroupMemberInput!): Group!
   removeMemberFromGroup(input: RemoveGroupMemberInput!): Group!
-  addCourseToGroup(input: AddGroupCourseInput!): Group!
+  addCourseToGroup(input: AddGroupCourseInput!): [Group]!
   removeCourseFromGroup(input: RemoveGroupCourseInput!): Group!
 }
 
@@ -53,7 +53,7 @@ input RemoveGroupMemberInput {
 }
 
 input AddGroupCourseInput {
-  groupId: ID!
+  groupIds: [ID!]!
   courseIds: [ID!]!
 }
 
