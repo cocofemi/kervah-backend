@@ -13,6 +13,7 @@ export const policyDocumentResolvers = {
 
              return await PolicyDocument.find({ businessId })
                 .populate("businessId uploadedBy")
+                .sort({ createdAt: -1 })
         },
     },
 
