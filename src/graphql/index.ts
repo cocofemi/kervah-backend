@@ -34,19 +34,28 @@ import { courseGroupTypeDef } from "./course-group/course-group.schema";
 import { courseGroupResolver } from "./course-group/course-group.resolver";
 import { policyTypeDefs } from "./policy/policy.schema";
 import { policyDocumentResolvers } from "./policy/policy.resolver";
+import { simulatedScenarioTypeDef } from "./simulated-scenarios/simulated-scenarios.schema";
+import { simulatedScenarioResolver } from "./simulated-scenarios/simulated-scenarios.resolver";
+import { dailyTriviaTypeDefs } from "./daily-trivia/daily-trivia.schema";
+import { dailyTriviaAnswersTypeDefs } from "./daily-trivia-answers/daily-trivia-answers-schema";
+import { dailyTriviaResolvers } from "./daily-trivia/daily-trivia.resolver";
+import { dailyTriviaAnswersResolvers } from "./daily-trivia-answers/daily-trivia-answers-resolver";
 
 const typeDefs = mergeTypeDefs([userTypeDefs, authTypeDefs, 
   businessTypeDefs, courseTypeDef, lessonTypeDef,
 assessmentTypeDef, scenarioTypeDefs, resultTypeDefs,
 groupTypeDefs, courseProgressTypeDefs, certificateTypeDefs,
 notificationTypeDefs, businessInviteTypeDefs, analyticsTypeDef,
-converationTypeDefs, courseGroupTypeDef, policyTypeDefs]);
+converationTypeDefs, courseGroupTypeDef, policyTypeDefs,
+simulatedScenarioTypeDef, dailyTriviaTypeDefs, dailyTriviaAnswersTypeDefs]);
+
 const resolvers = mergeResolvers([userResolver, authResolver, 
   businessResolver, courseResolver, lessonResolver,
 assessmentResolver, scenarioResolver, resultResolver,
 groupResolver, courseProgressResolver, certificateResolver,
 notificationResolver, businessInviteResolver, analyticsResolver,
-conversationResolver, courseGroupResolver, policyDocumentResolvers]);
+conversationResolver, courseGroupResolver, policyDocumentResolvers,
+simulatedScenarioResolver, dailyTriviaResolvers, dailyTriviaAnswersResolvers]);
 
 export const schema = makeExecutableSchema({
   typeDefs,

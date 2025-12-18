@@ -81,14 +81,26 @@ app.register(mercurius, {
   context: async (request, response) => {
   let auth = false;
   let user = null;
+  let isInternal = false
   const sessionCookie = request.cookies?.session; 
+  const authHeader = request.headers.authorization;
   // const token = request.headers.authorization?.replace("Bearer ", "");
 
-  // console.log("Session cookie", sessionCookie)
 
+    if (authHeader === `Bearer ${process.env.INTERNAL_API_KEY}`) {
+      isInternal = true;
+      return {
+        auth: false,
+        user: null,
+        isInternal,
+        request,
+        response,
+      };
+    }
+    
     if (!sessionCookie) {
-    return { auth, user };
-  }
+      return { auth, user };
+    }
 
   try {
     const decoded = jwtVerify.verify(
@@ -103,7 +115,7 @@ app.register(mercurius, {
   } catch (err) {
     console.error("Invalid session cookie:", err);
   }
-  return { auth, user, response, request };
+  return { auth, user, isInternal, response, request };
 },
 })
 const PORT = process.env.PORT || 9000;
