@@ -11,6 +11,6 @@ const SimulatedScenarioSchema = new Schema<ISimulatedScenario>(
   { timestamps: true }
 );
 
-SimulatedScenarioSchema.index({ userId: 1, orgId: 1 }, { unique: true });
+// SimulatedScenarioSchema.index({ userId: 1, orgId: 1 }, { unique: true });
 
 export const SimulatedScenario = mongoose.model<ISimulatedScenario>("SimulatedScenario", SimulatedScenarioSchema);
