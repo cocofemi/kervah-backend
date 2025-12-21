@@ -77,7 +77,7 @@ app.addHook("preHandler", (req, reply, done) => {
 
 app.register(mercurius, {
   schema,
-  graphiql: true,
+  graphiql: process.env.NODE_ENV !== 'production',
   context: async (request, response) => {
   let auth = false;
   let user = null;
