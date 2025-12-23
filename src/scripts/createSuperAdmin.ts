@@ -15,7 +15,7 @@ async function seed() {
 
         const res = await User.create({
             email: "hello@kervah.co.uk",
-            password: "SuperAdminKervah912!",
+            password: "Kervah/SuperAdmin/011!",
             role: 'super-admin',
             fname: "Kervah",
             lname: "Super-Admin",
