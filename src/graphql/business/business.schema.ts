@@ -22,6 +22,12 @@ type BusinessOverview {
   totalCertificates: Int!
 }
 
+type PlatformOverview {
+  totalBusinesses: Int!
+  totalCourses: Int!
+  totalUsers: Int!
+}
+
 
 type Member {
   user: User!
@@ -69,11 +75,34 @@ type UserCourseSummary {
   score: Float
 }
 
+input PaginationInput {
+  page: Int = 1
+  limit: Int = 10
+}
+
+
+type PaginationMeta {
+  total: Int!
+  page: Int!
+  limit: Int!
+  totalPages: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
+
+type PaginatedBusinesses {
+  data: [Business!]!
+  meta: PaginationMeta!
+}
+
+
 type Query {
-  businesses: [Business!]!
+  businesses(pagination: PaginationInput): PaginatedBusinesses!
   business(businessId: ID!): Business!
   businessCourses(businessId: ID!): [Course!]!
   businessOverview(businessId: ID!): BusinessOverview!
+  platformOverview(businessId: ID!): PlatformOverview!
   businessLearningSummary(businessId: ID!): [BusinessLearningSummary!]!
   groupLearningSummary(groupId: ID!): [BusinessLearningSummary!]!
 }

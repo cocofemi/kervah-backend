@@ -3,7 +3,7 @@ export const userTypeDefs = `
     id: ID!
     fname: String!
     lname: String!
-    email: String!
+    email: String
     avatar: String
     occupation: String
     serviceType: String
@@ -11,8 +11,8 @@ export const userTypeDefs = `
     bio: String
     emailVerified: Boolean
     businesses: [BusinessRole!]
-    createdAt: String!
-    updatedAt: String!
+    createdAt: String
+    updatedAt: String
   }
     
 
@@ -31,8 +31,28 @@ export const userTypeDefs = `
     name: String!
   }
 
+input PaginationInput {
+  page: Int = 1
+  limit: Int = 10
+}
+
+type PaginationMeta {
+  total: Int!
+  page: Int!
+  limit: Int!
+  totalPages: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
+type PaginatedUsers {
+  data: [User!]!
+  meta: PaginationMeta!
+}
+
+
   type Query {
-    users: [User!]!
+    users(pagination: PaginationInput): PaginatedUsers!
     user: User!
     me: User
   }

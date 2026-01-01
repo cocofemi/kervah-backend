@@ -3,8 +3,6 @@ import { User } from "../models/user.model";
 import { Business } from "../models/business.model";
 import mongoose from "mongoose";
 
-
-
 async function seed() {
     try {
         console.log("Connecting to MongoDB...");
@@ -14,8 +12,7 @@ async function seed() {
         console.log("Connected.");
 
         const res = await User.create({
-            email: "hello@kervah.co.uk",
-            password: "Kervah/SuperAdmin/011!",
+
             role: 'super-admin',
             fname: "Kervah",
             lname: "Super-Admin",

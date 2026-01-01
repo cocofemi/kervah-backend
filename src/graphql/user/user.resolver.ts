@@ -12,16 +12,40 @@ interface Context {
 
 export const userResolver = {
     Query: { 
-    users: async (_: any, __: any, ctx: Context): Promise<IUser[]> => {
+    users: async (_: any,{pagination}: any, ctx: Context) => {
       if (!ctx.auth) throw new Error("Unauthorized");
       const user = await User.findById(ctx.user)
       if(user?.role != "super-admin")throw new Error("Unauthorized");
       
-      const users =  await User.find().populate({
-        path: "businesses.business",
-        select: "id name",
-        })
-        return users
+        const page = pagination?.page ?? 1
+        const limit = pagination?.limit ?? 10
+        const skip = (page - 1) * limit
+
+        const [total, data] = await Promise.all([
+            User.countDocuments(),
+            User.find()
+            .skip(skip)
+            .limit(limit)
+            .populate({
+                path: "businesses.business",
+                select: "id name",
+            })
+            .sort({ createdAt: -1 })
+        ])
+
+        const totalPages = Math.ceil(total / limit)
+
+        return {
+            data,
+            meta: {
+            total,
+            page,
+            limit,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+            },
+        }
     },
     user: async(_:any, __:any, ctx: Context): Promise<IUser | null> => {
         console.log("User", ctx)

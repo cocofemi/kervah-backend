@@ -15,24 +15,36 @@ interface Context {
 
 export const businessResolver = {
     Query : {
-        businesses: async (_: any, __: any, ctx: Context): Promise<IBusiness[]> => {
+        businesses: async (_: any, {pagination}: any, ctx: Context) => {
             if (!ctx.auth) throw new Error("Unauthorized");
             const user = await User.findById(ctx.user)
             if(user?.role != "super-admin")throw new Error("Unauthorized");
-            const populatedBusinesses = await Business.find().populate({
-                path: "ownerId",
-                select: "id fname lname email",
-                })
-                .populate({
-                    path: "members.user",
-                    select: "id, fname lname email"
-                })
-                .populate({
-                    path: "assignedCourses",
-                    select: "id title duration"
-                })
 
-              return populatedBusinesses
+            const page = pagination?.page ?? 1
+            const limit = pagination?.limit ?? 10
+            const skip = (page - 1) * limit
+
+            const [total, data] = await Promise.all([
+                Business.countDocuments({}),
+                Business.find({})
+                .skip(skip)
+                .limit(limit)
+                .sort({ createdAt: -1 })
+                .populate("ownerId members assignedCourses")
+            ])
+
+            const totalPages = Math.ceil(total / limit)
+                return {
+                    data,
+                    meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages,
+                    hasNextPage: page < totalPages,
+                    hasPrevPage: page > 1
+                }
+            }
         },
         business: async (_: any, {businessId}:{businessId: string}, ctx: Context): Promise<IBusiness | null> => {
             if (!ctx.auth) throw new Error("Unauthorized");
@@ -88,6 +100,30 @@ export const businessResolver = {
                 totalCourses,
                 totalGroups,
                 totalCertificates,
+            };
+        },
+
+        platformOverview: async (_: any, { businessId }: any, ctx: Context) => {
+            if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
+                await checkBusinessPermission(businessId, ctx?.user, ["super-admin"]);
+
+            const [totalBusinesses, totalCourses, totalUsers] =
+                await Promise.all([
+                // Members linked to business
+                Business.countDocuments({}),
+
+                // Courses assigned to business
+                Course.countDocuments({}),
+
+                // Groups under business
+                User.countDocuments({}),
+                ]);
+
+            return {
+                totalBusinesses,
+                totalCourses,
+                totalUsers,
+                // totalCertificates,
             };
         },
 
