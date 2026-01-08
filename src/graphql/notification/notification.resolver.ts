@@ -9,10 +9,9 @@ interface Context {
 
 export const notificationResolver = {
     Query: {
-        notificationsForUser: async (_: any, { userId }: any, ctx: Context) => {
+        notificationsForUser: async (_: any, __: any, ctx: Context) => {
             if(!ctx.auth) throw new Error("Unauthorized");
-            if (ctx.user != userId) throw new Error("You can only view your own notifications");
-            return await Notification.find({ user: userId })
+            return await Notification.find({ user: ctx?.user, isRead: false})
                 .sort({ createdAt: -1 })
         },
 
@@ -49,7 +48,6 @@ export const notificationResolver = {
         markNotificationRead: async (_: any, { notificationId }: any, ctx: Context):Promise<INotification | null> => {
             const notif = await Notification.findById(notificationId);
             if (!notif) throw new Error("Notification not found");
-                console.log("User", notif);
             // User can only mark their own notifications
             if (notif.user?.toString() !== ctx.user.toString()) {
                 throw new Error("Not authorized to modify this notification");

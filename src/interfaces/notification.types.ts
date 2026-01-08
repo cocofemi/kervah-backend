@@ -5,7 +5,7 @@ export interface INotification  {
   business?: Types.ObjectId;    // for business-wide notifications
   title: string;
   message: string;
-  type: "system" | "course" | "certificate" | "group" | "business";
+  type: string;
   data: Schema.Types.Mixed
   isRead: boolean;
   createdAt: Date;

@@ -9,7 +9,8 @@ import { NotificationType } from "../../models/notification.model";
 
 interface Context {
    auth: boolean;
-   user?:  string ;
+   user?:  string;
+   subscriptionValid: boolean;
 }
 
 export const businessInviteResolver = {
@@ -45,6 +46,22 @@ export const businessInviteResolver = {
             const { businessId, email, role } = input;
             if (!ctx.auth || !ctx.user) throw new Error("Unauthorized");
             const currentUserId = ctx.user; 
+
+            if (!ctx.subscriptionValid) {
+                throw new Error("Subscription inactive. Upgrade required.");
+            }
+
+            //Check if max amount of seats for business on subscription plan
+            const business = await Business.findById(businessId)
+
+            if (!business) throw new Error("Business not found");
+
+            const members = business.members.length;
+            const subscribedUsers = business.subscribedUsers;
+
+            if (members >= subscribedUsers) {
+            throw new Error("Seat limit reached. Upgrade your plan.");
+            }
 
             let invite = await BusinessInvite.findOne({ 
                 email, 

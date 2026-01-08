@@ -9,8 +9,10 @@ type Business {
   logo: String
   members: [Member!]!
   assignedCourses: [Course!]
+  trialEndsAt: String
+  subscribedUsers: Int!
   subscriptionPlan: String
-  subscriptionStatus: Boolean
+  subscriptionStatus: String
   createdAt: String
   updatedAt: String
 }

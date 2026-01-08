@@ -340,8 +340,6 @@ export const businessResolver = {
             if (!ctx.auth) throw new Error("Unauthorized");
             const user = await User.findById(ctx.user);
 
-            console.log("User", user)
-
             if (!user) throw new Error("User not found");
 
             const existing = await Business.findOne({

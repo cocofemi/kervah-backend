@@ -26,8 +26,6 @@ export const analyticsResolver = {
             const lessonCount = totalLessons?.lessons?.length ?? 1;
             const scenario = await Scenario.findOne({courseId})
 
-            console.log(scenario?._id)
-
             const progresses = await CourseProgress.find({
                 course: courseId,
                 business: businessId,

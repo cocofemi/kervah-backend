@@ -12,7 +12,8 @@ async function seed() {
         console.log("Connected.");
 
         const res = await User.create({
-
+            // email: "hello@kervah.co.uk",
+            // password: "Kervah/Super/Admin/011!",
             role: 'super-admin',
             fname: "Kervah",
             lname: "Super-Admin",

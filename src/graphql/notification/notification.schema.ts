@@ -9,6 +9,10 @@ enum NotificationType {
   COURSE_PASSED
   COURSE_FAILED
   CERTIFICATE_ISSUED
+  SUBSCRIPTION_SUCCESS
+  UPGRADE_SUBSCRIPTION 
+  CANCEL_SUBSCRIPTION
+
 }
 
 type Notification {
@@ -22,7 +26,7 @@ type Notification {
 }
 
 extend type Query {
-  notificationsForUser(userId: ID!): [Notification!]!
+  notificationsForUser: [Notification!]!
   notificationsForBusiness(businessId: ID!): [Notification!]!
 }
 

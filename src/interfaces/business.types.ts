@@ -12,9 +12,11 @@ export interface IBusiness {
     serviceType: "CH" | "SA" | "BOTH"
     members: IMember[]
     // groups: [IGroup]
+    subscribedUsers: number;
     assignedCourses: Types.ObjectId[];
     subscriptionPlan?: string | undefined
-    subscriptionStatus?: Boolean | undefined
+    subscriptionStatus?: string | undefined
+    trialEndsAt?: Date | null;
     createdAt: Date
     updatedAt: Date
 }

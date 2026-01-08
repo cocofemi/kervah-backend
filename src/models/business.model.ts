@@ -33,16 +33,19 @@ const BusinessSchema: Schema = new Schema<IBusiness> (
         default: null
     },
     members: { type: [MemberSchema], default: [] },
+    subscribedUsers: {type: Number, default: 2},
     assignedCourses: [{ type: Schema.Types.ObjectId, ref: "Course" }],
     subscriptionPlan: {
         type: String,
-        enum: ["free", "starter", "standard", "premium"],
+        enum: ["free", "pro"],
         default: "free"
     },
     subscriptionStatus: {
-        type: Boolean,
-        default: false
-    }
+        type: String,
+        enum: ["active", "trialing" , "canceled", "past_due", "unpaid", "canceling"],
+        default: "trialing"
+    },
+    trialEndsAt: {type: Date}
     },
      {timestamps: true},
 );

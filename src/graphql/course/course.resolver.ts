@@ -5,12 +5,14 @@ import { ICourse  } from "../../interfaces/course.types";
 interface Context {
     auth: boolean;
     user?: {id: string};
+    subscriptionValid: boolean
 }
 
 export const courseResolver = {
     Query : {
         courses: async (_: any, __: any, ctx: Context): Promise<ICourse[]> => {
             if (!ctx.auth) throw new Error("Unauthorized");
+              if (!ctx.subscriptionValid) throw new Error("Subscription expired")
                 return await Course.find({$and: [{ archive: { $ne: true } },
                     { publish: { $ne: false } }]})
                 .populate({ path: "createdBy", select: "id fname lname email" })
@@ -27,6 +29,7 @@ export const courseResolver = {
         },
         course: async (_: any, {id}:{id: string}, ctx: Context): Promise<ICourse | null> => {
             if (!ctx.auth) throw new Error("Unauthorized");
+            if (!ctx.subscriptionValid) throw new Error("Subscription expired")
             const populatedCourse =  await Course.findById(id)
                 .populate({ path: "createdBy", select: "id fname lname email" })
                 .populate("scenarios",  "id title instructions rubric")

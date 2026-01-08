@@ -28,7 +28,7 @@ export const userResolver = {
             .limit(limit)
             .populate({
                 path: "businesses.business",
-                select: "id name",
+                select: "id name subscriptionPlan subscriptionStatus trialEndsAt",
             })
             .sort({ createdAt: -1 })
         ])
@@ -48,18 +48,17 @@ export const userResolver = {
         }
     },
     user: async(_:any, __:any, ctx: Context): Promise<IUser | null> => {
-        console.log("User", ctx)
         if (!ctx.auth) throw new Error("Unauthorized");
         return await User.findById(ctx.user).populate({
         path: "businesses.business",
-        select: "id name",
+        select: "id name subscriptionPlan subscriptionStatus trialEndsAt",
         })
     },
     me: async(_:any, __:any, ctx: Context): Promise<IUser | null> => {
          if (!ctx.user) throw new Error("Unauthorized");
          return await User.findById(ctx.user.id).populate({
         path: "businesses.business",
-        select: "id name",
+        select: "id name subscriptionPlan subscriptionStatus trialEndsAt",
         })
     }
 
@@ -93,7 +92,7 @@ Mutation :{
         const user = await User.findOne({ email}).select("+password")
         .populate({
         path: "businesses.business",
-        select: "id name",
+        select: "id name subscriptionPlan subscriptionStatus trialEndsAt",
         })
         if (!user || !(await user.comparePassword(password))) {
         throw new Error("Invalid credentials");

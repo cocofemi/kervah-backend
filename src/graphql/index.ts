@@ -40,6 +40,8 @@ import { dailyTriviaTypeDefs } from "./daily-trivia/daily-trivia.schema";
 import { dailyTriviaAnswersTypeDefs } from "./daily-trivia-answers/daily-trivia-answers-schema";
 import { dailyTriviaResolvers } from "./daily-trivia/daily-trivia.resolver";
 import { dailyTriviaAnswersResolvers } from "./daily-trivia-answers/daily-trivia-answers-resolver";
+import { subscriptionTypeDefs } from "./subscription/subscription.schema";
+import { subscriptionResolver } from "./subscription/subscription.resolver";
 
 const typeDefs = mergeTypeDefs([userTypeDefs, authTypeDefs, 
   businessTypeDefs, courseTypeDef, lessonTypeDef,
@@ -47,7 +49,7 @@ assessmentTypeDef, scenarioTypeDefs, resultTypeDefs,
 groupTypeDefs, courseProgressTypeDefs, certificateTypeDefs,
 notificationTypeDefs, businessInviteTypeDefs, analyticsTypeDef,
 converationTypeDefs, courseGroupTypeDef, policyTypeDefs,
-simulatedScenarioTypeDef, dailyTriviaTypeDefs, dailyTriviaAnswersTypeDefs]);
+simulatedScenarioTypeDef, dailyTriviaTypeDefs, dailyTriviaAnswersTypeDefs, subscriptionTypeDefs]);
 
 const resolvers = mergeResolvers([userResolver, authResolver, 
   businessResolver, courseResolver, lessonResolver,
@@ -55,7 +57,7 @@ assessmentResolver, scenarioResolver, resultResolver,
 groupResolver, courseProgressResolver, certificateResolver,
 notificationResolver, businessInviteResolver, analyticsResolver,
 conversationResolver, courseGroupResolver, policyDocumentResolvers,
-simulatedScenarioResolver, dailyTriviaResolvers, dailyTriviaAnswersResolvers]);
+simulatedScenarioResolver, dailyTriviaResolvers, dailyTriviaAnswersResolvers, subscriptionResolver]);
 
 export const schema = makeExecutableSchema({
   typeDefs,

@@ -31,7 +31,7 @@ export async function pushNotification(input:PushNotificationInput) {
         isRead: notification.isRead,
         createdAt: notification.createdAt,
     };
-
+    
     getIO().to(userId.toString()).emit("notification", payload);
     return notification;
 }

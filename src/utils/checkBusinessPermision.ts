@@ -19,9 +19,6 @@ const member = business.members?.find(
     String(userId)
 );
 
-console.log("Allowed roles:", allowedRoles);
-console.log("Member role:", member?.role);
-
   if (!member) throw new Error("User is not a member of this business");
 
   if (!allowedRoles.includes(member.role)) {
