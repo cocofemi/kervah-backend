@@ -64,8 +64,11 @@ const UserSchema: Schema = new Schema<IUser, UserModel, IUserMethods> (
       default: false
     },
    businesses: { type: [BusinessRoleSchema], default: [] },
-   conversations: [{ type: Schema.Types.ObjectId, ref: "Conversation" }]
-
+   conversations: [{ type: Schema.Types.ObjectId, ref: "Conversation" }],
+    onboardingComplete: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,

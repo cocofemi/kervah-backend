@@ -132,7 +132,7 @@ app.post("/webhook/stripe",{ config: { rawBody: true } }, async (request, reply)
 
 app.register(mercurius, {
   schema,
-  graphiql: process.env.NODE_ENV === 'production',
+  graphiql: process.env.NODE_ENV === 'local',
   context: async (request, response) => {
   let auth = false;
   let user = null;

@@ -126,11 +126,24 @@ Mutation :{
         })
         return {token, user}
     },
-    updateUser: async(_:any, { fname, lname, email, avatar, occupation, serviceType, bio}: {id: string, fname:string, lname:string, email:string, avatar?:string, occupation:string, serviceType:string, bio?:string}, ctx: Context): Promise<IUser | null> => {
+    updateUser: async(_:any, { fname, lname, email, avatar, 
+        occupation, serviceType, bio}: {id: string, fname:string, 
+            lname:string, email:string, avatar?:string, occupation:string, 
+            serviceType:string, bio?:string,}, ctx: Context): Promise<IUser | null> => {
         if (!ctx.auth) throw new Error("Unauthorized");
         const checkUser = await User.findById(ctx.user);
         if (!checkUser) throw new Error("User doesn't exist");
-        return await User.findByIdAndUpdate(ctx.user, { fname, lname, email, avatar, occupation, serviceType, bio }, { new: true });
+        return await User.findByIdAndUpdate(ctx.user, { fname, lname, email, avatar, 
+            occupation, serviceType, bio }, { new: true });
+    },
+    markOnboardingComplete: async(_:any, __:any, ctx: Context): Promise<boolean> => {
+        console.log(ctx.user)
+        if (!ctx.auth) throw new Error("Unauthorized");
+        const checkUser = await User.findById(ctx.user);
+        if (!checkUser) throw new Error("User doesn't exist");
+        await User.findByIdAndUpdate(ctx.user, { onboardingComplete: true }, { new: true });
+
+        return true
     },
     deleteUser: async(_:any, {id}: {id: string}, ctx:Context): Promise<boolean> => {
         if (!ctx.auth) throw new Error("Unauthorized");

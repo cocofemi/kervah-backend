@@ -7,6 +7,8 @@ import { Subscription } from "../models/subscription.model";
 import { stripe } from "./stripe";
 import { pushNotification } from "../services/notificationService";
 import { NotificationType } from "../models/notification.model";
+import { sendBillingInformationEmail } from "../services/billing-info-email";
+import { User } from "../models/user.model";
 
 export const checkoutSession = async (event:Stripe.Event) => {
     console.log("Processing subscription....")
@@ -85,6 +87,16 @@ export const checkoutSession = async (event:Stripe.Event) => {
           businessId,
           },
       });
+
+      // const business = await Business.findById(businessId)
+      // const user = await User.findById(ownerId)
+      // const billing = await BillingHistory.findOne( { stripeSubscriptionId: subscriptionId })
+
+      // if (user?.email && business?.name && billing) {
+      //   await sendBillingInformationEmail(user.email, business.name, 
+      //     billing.stripeInvoiceId, billing.amount, billing.currency, billing.quantity, 
+      //     billing.description, billing.periodStart, billing.periodEnd)
+      // }
 }
 
 export const invoicePayment = async (event:Stripe.Event) => {

@@ -11,6 +11,7 @@ export const userTypeDefs = `
     bio: String
     emailVerified: Boolean
     businesses: [BusinessRole!]
+    onboardingComplete: Boolean
     createdAt: String
     updatedAt: String
   }
@@ -80,5 +81,6 @@ type PaginatedUsers {
     bio: String): User!
 
     deleteUser(id: ID!): Boolean!
+    markOnboardingComplete: Boolean!
   }
 `;

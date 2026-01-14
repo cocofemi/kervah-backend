@@ -28,6 +28,7 @@ export interface IUser {
     emailVerified: boolean
     businesses: IBusinessRole[]
     conversations: IConversation[]
+    onboardingComplete: boolean;
     createdAt: Date
     updatedAt: Date
     comparePassword(password: string): Promise<boolean>
